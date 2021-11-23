@@ -4,4 +4,11 @@
     font-family: sans-serif;
 
 }
+.forside{
+    width: 100%;
+    height: 100vh ;
+    position:  relative;
+    overflow: hidden;
+    background: linear-gradient(to right,#b0c4de, #87ceeb);    
 
+}
