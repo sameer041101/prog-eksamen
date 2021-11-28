@@ -1,7 +1,20 @@
 var createError = require('http-errors');
 const express = require('express'); // Include ExpressJS
-const app = express(); // Create an ExpressJS app
+const session = require('express-session');
 const bodyParser = require('body-parser'); // Middleware
+const fs = require('fs');
+const path = require('path');
+const { use } = require('passport');
+
+const app = express(); // Create an ExpressJS app
+app.use(session({
+  secret: 'secret',
+  resave: true,
+  saveUninitialized: true,
+}))
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -30,6 +43,21 @@ app.post('/login', (req, res) => {
   res.send(`Username: ${username} Password: ${password}`);
 });
 
+// Route to home
+app.get('/home', (req, res) => {
+  if(req.session.loggedin){
+    res.sendFile(__dirname + '/home.html');
+  }else{
+    res.redirect("/")
+  }
+  
+});
+
+// Route to jsonfile
+app.get('/json', (req, res) => {
+  res.sendFile(__dirname + '/json.txt');
+});
+
 // Route to SignUp Page
 app.get('/signup', (req, res) => {
     res.sendFile(__dirname + '/login metode/signup.html');
@@ -45,14 +73,50 @@ app.get('/signup', (req, res) => {
     let passwordEqual = false;
     if (password == passwordRepeat) {
         passwordEqual = true;
+    
+      var data = {
+        username: username,
+        password: password
+      }
+
+      json = JSON.stringify({data})
+      file = fs.readFileSync("./json.json");
+        let obj = JSON.parse(data);
+        console.log(obj)
+
+      res.send("hej")
+      var hasMatch = false;
+
+      // for(i=0; i < JSON.parse(file).length; i++) {
+      //   var data = file[i]
+      //   console.log(data)
+      // }
+
+
+
+        
+      // }
+      // else{
+      //   res.send("findes")
+      // }
+      // fs.writeFileSync('./json.txt', json+file, function(err, result) {
+      //   if(err) console.log('error', err);
+      // });
+      
+
+      // req.session.loggedin = true
+      // res.redirect("/home")
     }
-    res.send(`
-            Username: ${username} <br> 
-            Password: ${password} <br>
-            Password-repeated: ${passwordRepeat} <br>
-            Is password equal: ${passwordEqual} <br>
-            Rember: ${remember}
-    `);
+    else{
+      res.send(`Password ikke ens`)
+    }
+    // res.send(`
+    //         Username: ${username} <br> 
+    //         Password: ${password} <br>
+    //         Password-repeated: ${passwordRepeat} <br>
+    //         Is password equal: ${passwordEqual} <br>
+    //         Rember: ${remember}
+    // `);
   });
 
 // Route to 404 image
