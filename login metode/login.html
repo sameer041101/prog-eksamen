@@ -6,23 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>forside</title>
-    <link rel="stylesheet" href="./login.css"
+    <link rel="stylesheet" href="/logincss">
 
 
 </head>
-<body>
+<body class="signup">
    
 
     <div class="container">
-        <form class="form" id="login">
+        <form action="/login" method="post">
             <h1 class="form_ _title">login</h1>
             <div class="form_ _message form_ _message--error"></div>
             <div class="form__input-group">
-                <input type="text" class="form__input" autofocus placeholder="Username or email">
+                <input type="text" class="form__input" autofocus name="username" placeholder="Username or email" required>
                 <div class="form__input-error-message"></div>
             </div>
             <div class="form__input-group">
-                <input type="password" class="form__input" autofocus placeholder="Password">
+                <input type="password" class="form__input" name="password" placeholder="Password" required>
                 <div class="form__input-error-message"></div>
 
                 <button class="form__button" type="submit">Continue</button>
@@ -30,7 +30,10 @@
                 <a href="#" class="form__link">Forgot your password?</a>
             </p>
             <p class="form__text">
-                <a href="Createaccount.html">create and account</a>
+                <a href="/signup">create and account</a>
+            </p>
+            <p class="form__text">
+                <a href="/">Return home</a>
             </p>
 
             
