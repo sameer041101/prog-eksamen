@@ -1,0 +1,24 @@
+{
+  "name": "prog-eksamen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "eksamen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "./node_modules/nodemon/bin/nodemon.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sameer041101/prog-eksamen.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sameer041101/prog-eksamen/issues"
+  },
+  "homepage": "https://github.com/sameer041101/prog-eksamen#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.15"
+  }
+}
