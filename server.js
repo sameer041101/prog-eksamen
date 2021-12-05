@@ -1,22 +1,48 @@
 var createError = require('http-errors');
 const express = require('express'); // Include ExpressJS
 const session = require('express-session');
+var cookieSession = require('cookie-session')
 const bodyParser = require('body-parser'); // Middleware
-const fs = require('fs');
+const fs = require('fs-extra')
 const path = require('path');
-const { use } = require('passport');
+
+var alert = require('alert');
 
 const app = express(); // Create an ExpressJS app
-app.use(session({
-  secret: 'secret',
-  resave: true,
-  saveUninitialized: true,
+
+const oneDay = 1000 * 60 * 60 * 24;
+// app.use(session({
+//   secret: 'secret',
+//   resave: true,
+//   saveUninitialized: true,
+//   secure:false,
+// }))
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secret'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+
+async function writeJsonFile (path, file) { // write json to a file
+  try {
+    await fs.writeJson(path, file); 
+    console.log('success!')
+    
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 
 // Route to css
 app.get('/logincss', (req, res) => {
@@ -24,6 +50,9 @@ app.get('/logincss', (req, res) => {
   });
 app.get('/eksamencss', (req, res) => {
   res.sendFile(__dirname + '/eksamen.css');
+});
+app.get('/homecss', (req, res) => {
+  res.sendFile(__dirname + '/home/home.css');
 });
 
 // Route to Homepage
@@ -36,26 +65,56 @@ app.get('/login', (req, res) => {
   res.sendFile(__dirname + '/login metode/login.html');
 });
 
-app.post('/login', (req, res) => {
-  // Insert Login Code Here
-  let username = req.body.username;
+// Log in
+app.post('/login', async (req, res) => {
+
+  let userEmail = req.body.username;
   let password = req.body.password;
-  res.send(`Username: ${username} Password: ${password}`);
+
+  async function readJsonFile (f, userEmail, password) {
+    const obj = await fs.readJSON(f, { throws: false })
+    console.log(obj) // => null
+
+    // Check if file is empty and if not empty check if email is taken
+    if(obj != null){ // If file not empty
+      // read in all usres to users
+      for (var key in obj){
+
+        if(obj[key]["user"]["email"] == userEmail && obj[key]["user"]["password"] == password){
+          return true // login true
+        }
+        }
+      }
+      
+      return false // login false
+    
+  }
+  const path = './user.json';
+  var login = await readJsonFile(path, userEmail, password)
+  if (login == false){
+    alert("Email eller kodeord er forkert")
+    res.redirect("/login")
+  }else{
+    req.session.loggedin = true;
+    res.redirect("/home")
+  }
+});
+
+// log ud
+app.get('/logud', (req, res) => {
+  req.session = null
+  res.redirect("/")
 });
 
 // Route to home
 app.get('/home', (req, res) => {
   if(req.session.loggedin){
-    res.sendFile(__dirname + '/home.html');
+    res.sendFile(__dirname+'/home/');
   }else{
     res.redirect("/")
   }
-  
-});
 
-// Route to jsonfile
-app.get('/json', (req, res) => {
-  res.sendFile(__dirname + '/json.txt');
+  
 });
 
 // Route to SignUp Page
@@ -63,9 +122,10 @@ app.get('/signup', (req, res) => {
     res.sendFile(__dirname + '/login metode/signup.html');
   });
   
-  app.post('/signup', (req, res) => {
+  app.post('/signup', async (req, res) => {
     // Insert Login Code Here
     let username = req.body.Name;
+    let userEmail = req.body.email;
     let password = req.body.psw;
     let passwordRepeat = req.body.pswRepeat;
     let remember = req.body.remember;
@@ -74,49 +134,61 @@ app.get('/signup', (req, res) => {
     if (password == passwordRepeat) {
         passwordEqual = true;
     
-      var data = {
-        username: username,
-        password: password
-      }
+    const path = './user.json';
+    
+   
 
-      json = JSON.stringify({data})
-      file = fs.readFileSync("./json.json");
-        let obj = JSON.parse(data);
-        console.log(obj)
+    async function readJsonFile (f, userEmail, username, password) {
+      const obj = await fs.readJSON(f, { throws: false })
+      console.log(obj) // => null
+      // create array for users
+      var users = []
 
-      res.send("hej")
-      var hasMatch = false;
+      // Check if file is empty and if not empty check if email is taken
+      if(obj != null){ // If file not empty 
+        // read in all usres to users
+        for (var key in obj){
 
-      // for(i=0; i < JSON.parse(file).length; i++) {
-      //   var data = file[i]
-      //   console.log(data)
-      // }
+          if(obj[key]["user"]["email"] == userEmail){
+            return "EIU" // Return email is useds
+          }
+          var user = {};
+          user["user"] = obj[key]["user"];
 
-
-
+        users.push(user)
+          }
+        }
+        // push the new user to users
+        var key = "user";
+        var user = {};
         
-      // }
-      // else{
-      //   res.send("findes")
-      // }
-      // fs.writeFileSync('./json.txt', json+file, function(err, result) {
-      //   if(err) console.log('error', err);
-      // });
-      
+        user[key] = {"email": userEmail,"name":username,"password":password};
 
-      // req.session.loggedin = true
-      // res.redirect("/home")
+        users.push(user)
+
+        // write usres to users.json
+        writeJsonFile(path, users)
+        return JSON.stringify(users)
+      
+      
+    }
+    var file = await readJsonFile(path, userEmail, username, password)
+    
+    
+    if (file == "EIU"){
+      alert("Email is used")
+      res.redirect("/signup")
+    }else{
+      req.session.loggedin = true;
+      res.redirect("/home")
+    }
+    
+    
     }
     else{
       res.send(`Password ikke ens`)
+      res.end()
     }
-    // res.send(`
-    //         Username: ${username} <br> 
-    //         Password: ${password} <br>
-    //         Password-repeated: ${passwordRepeat} <br>
-    //         Is password equal: ${passwordEqual} <br>
-    //         Rember: ${remember}
-    // `);
   });
 
 // Route to 404 image
