@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Profile</title>
+        <link rel="stylesheet" href="/homecss">
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <div class="myitems">
+            <div class="back">
+                <a href="/home">Tilbage</a>
+            </div>
+            <div class="myitems-list">
+                <form action="/add" method="post">
+                    <div class="myitems-header">
+                        Tilføj varer
+                    </div> 
+                    <p> Udfyld nedstående for at tilføje en varer.</p>
+                    <hr>
+            
+            
+                    <label for="Name"><b>Katagori</b></label>
+                    <input type="text" placeholder="Udfyld katagori" name="kat" required>
+            
+                    <label for="email"><b>Pris (kr)</b></label>
+                    <input type="number" placeholder="Angiv pris" name="pris" required>
+            
+                    <!-- <label for="psw"><b>Billede</b></label>
+                    <input type="file" id="image-file" name="img" accept=".jpg, .jpeg, .png">
+             -->
+                    <div class="clearfix">
+                      <a href="/myitems"><button type="button" class="cancelbtn">Cancel</button></a>
+                      <button type="submit" class="signupbtn">Tilføj varer</button>
+                    </div>
+                  </form>
+            </div>
+        </div>
+    </body>
+</html>

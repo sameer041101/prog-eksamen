@@ -1,9 +1,195 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box
+}
+body {
+    font-family: Arial,
+    Helvetica, sans-serif;
+}
+  
 a{
     color: #006fca;
     text-decoration: none;
+}
+a:hover{
+    color: #0088f7;
+}
+.home, .profile, .myitems{
+    width: 100%;
+    height: 100vh ;
+    position:  relative;
+    overflow: hidden;
+    background: linear-gradient(to right,#b0c4de, #87ceeb);  
+  }
+.profile, .myitems, .home{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .logud{
     position: fixed;
     top: 5px;
     right: 10px;
 }
+.user, .back{
+    position: fixed;
+    top: 5px;
+    left: 10px;
+}
+.user-profile{
+    padding: 16px;
+    width: calc(100% - 100px);
+    border: 1px solid #ccc;
+    max-width: 600px;
+    background-color: #fff;
+}
+.profile-header{
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    padding: 10px 0px 10px 0px;
+}
+.profile-info{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+}
+.profile-element, .profile-title{
+
+    padding-left: 10px;
+}
+.profile-edit{
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+
+}
+
+.myitems-list{
+    padding: 16px;
+    width: calc(100% - 100px);
+    border: 1px solid #ccc;
+    max-width: 1000px;
+    background-color: #fff;
+}
+.myitems-header{
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    padding: 10px 0px 10px 0px;
+    font-size: 22px;
+}
+.myitems-add-item{
+    background: #f1f1f1;
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    height: 50px;
+}
+.myitems-add-item:hover{
+    background-color: #bebcbc;
+    cursor: pointer;
+}
+input[type=text], input[type=password], input[type=number] {
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+  }
+  
+  input[type=text]:focus, input[type=password]:focus, input[type=number] {
+    background-color: #ddd;
+    outline: none;
+  }
+  hr {
+    border: 1px solid #f1f1f1;
+    margin-bottom: 25px;
+  }
+  .cancelbtn, .signupbtn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    opacity: 0.9;
+    float: left;
+    width: 50%;
+  }
+  
+  button:hover {
+    opacity:1;
+  }  
+  /* Extra styles for the cancel button */
+.cancelbtn {
+    padding: 14px 20px;
+    background-color: #f44336;
+  }
+  #items{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      max-height: 500px;
+      overflow: auto;
+  }
+
+  .item{
+    width: 40%; height: 200px;
+    border: 1px solid #ccc;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 20px;
+  }
+  .item-img{
+      position: relative;
+      width: 100%;
+      height: 70%;
+      background-color: gray;
+  }
+  .item-info{
+      width: 100%;
+      height: 20%;
+      display: flex;
+      flex-direction: row;
+      padding:10px;
+  }
+  .item-kat, .item-owner{
+      display: flex;
+      flex-grow: 1;
+      justify-content: flex-start;
+      align-items: center;
+  }
+  .item-pris, .item-edit{
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .item-user-info{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    padding:10px;
+}
+
+.kat-select{
+    margin: 10px;
+}
+  
+select{
+    background-color: transparent;
+    border: 1px solid #ccc;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 100px;
+    cursor: pointer;
+}
+ 

@@ -5,22 +5,22 @@ var cookieSession = require('cookie-session')
 const bodyParser = require('body-parser'); // Middleware
 const fs = require('fs-extra')
 const path = require('path');
+const http = require('http');
+const multer = require("multer");
 
 var alert = require('alert');
 
 const app = express(); // Create an ExpressJS app
 
 const oneDay = 1000 * 60 * 60 * 24;
-// app.use(session({
-//   secret: 'secret',
-//   resave: true,
-//   saveUninitialized: true,
-//   secure:false,
-// }))
+
+const upload = multer({
+  dest: __dirname+"images"
+});
 
 app.use(cookieSession({
   name: 'session',
-  keys: ['secret'],
+  keys: ['key'],
 
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
@@ -44,6 +44,7 @@ async function writeJsonFile (path, file) { // write json to a file
 }
 
 
+
 // Route to css
 app.get('/logincss', (req, res) => {
     res.sendFile(__dirname + '/login metode/login.css');
@@ -60,6 +61,24 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/eksamen.html');
 });
 
+// Route to scripts
+app.get('/items', (req, res) => {
+  res.sendFile(__dirname + '/home/items.js');
+});
+app.get('/itemskat', (req, res) => {
+  res.sendFile(__dirname + '/home/itemskat.js');
+});
+app.get('/getuser', (req, res) => {
+  res.sendFile(__dirname + '/home/getuser.js');
+});
+
+// Route to json
+app.get('/varer', (req, res) => {
+  res.sendFile(__dirname + '/varer.json');
+});
+app.get('/userjson', (req, res) => {
+  res.sendFile(__dirname + '/user.json');
+});
 // Route to Login Page
 app.get('/login', (req, res) => {
   res.sendFile(__dirname + '/login metode/login.html');
@@ -96,6 +115,7 @@ app.post('/login', async (req, res) => {
     res.redirect("/login")
   }else{
     req.session.loggedin = true;
+    req.session.user = userEmail;
     res.redirect("/home")
   }
 });
@@ -106,16 +126,7 @@ app.get('/logud', (req, res) => {
   res.redirect("/")
 });
 
-// Route to home
-app.get('/home', (req, res) => {
-  if(req.session.loggedin){
-    res.sendFile(__dirname+'/home/');
-  }else{
-    res.redirect("/")
-  }
 
-  
-});
 
 // Route to SignUp Page
 app.get('/signup', (req, res) => {
@@ -180,6 +191,7 @@ app.get('/signup', (req, res) => {
       res.redirect("/signup")
     }else{
       req.session.loggedin = true;
+      req.session.user= userEmail;
       res.redirect("/home")
     }
     
@@ -187,9 +199,102 @@ app.get('/signup', (req, res) => {
     }
     else{
       res.send(`Password ikke ens`)
-      res.end()
     }
   });
+
+
+// Route to home
+app.get('/home', (req, res) => {
+  if(req.session.loggedin){
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Set-Cookie', ['user='+req.session.user]);
+    res.sendFile(__dirname+'/home/');
+  }else{
+    res.redirect("/")
+  }
+});
+
+// Route user page
+app.get('/user', (req, res) => {
+  if(req.session.loggedin){
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Set-Cookie', ['user='+req.session.user]);
+    res.sendFile(__dirname+'/home/user.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+// Route my items page
+app.get('/myitems', (req, res) => {
+  if(req.session.loggedin){
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Set-Cookie', ['user='+req.session.user]);
+    res.sendFile(__dirname+'/home/myitems.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+
+// Route add item page
+app.get('/add', (req, res) => {
+  if(req.session.loggedin){
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Set-Cookie', ['user='+req.session.user]);
+    res.sendFile(__dirname+'/home/additem.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.post('/add', async (req, res) => {
+
+  let katagori = req.body.kat;
+  let pris = req.body.pris;
+  let img = req.body.img;
+  
+  const path = './varer.json';
+  
+ 
+
+  async function readJsonFile (f, katagori, pris, img) {
+    const obj = await fs.readJSON(f, { throws: false })
+    console.log(obj) // => null
+    // create array for varere
+    var varers = []
+
+    if(obj != null){ // If file not empty 
+      // read in all varer to varers
+      for (var key in obj){
+
+        var varer = {};
+        varer["varer"] = obj[key]["varer"];
+
+        varers.push(varer)
+        }
+      }
+      // push the new varer to varers
+      var key = "varer";
+      var varer = {};
+      
+      varer[key] = {"kat": katagori,"pris":pris, "user": req.session.user};
+
+      varers.push(varer)
+
+      // write usres to users.json
+      writeJsonFile(path, varers)
+      return JSON.stringify(varers)
+    
+    
+  }
+  var file = await readJsonFile(path, katagori, pris)
+  
+  
+  res.redirect("/myitems")
+  
+  
+});
 
 // Route to 404 image
 app.get('/404', (req, res) => {
