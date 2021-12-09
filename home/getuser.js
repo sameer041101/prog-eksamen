@@ -26,19 +26,19 @@ user = () => {
                 <div class="profile-info">
                     <div class="profile-title">Email: </div>
                     <div class="profile-element"> ${data[key]["user"]["email"]}</div>
-                    <div class="profile-edit"><a href="">Edit</a></div>
+                    <div class="profile-edit"><a href="/editemail">Edit</a></div>
                 </div>
                 <hr>
                 <div class="profile-info">
                     <div class="profile-title">Navn: </div>
                     <div class="profile-element">${data[key]["user"]["name"]}</div>
-                    <div class="profile-edit"><a href="">Edit</a></div>
+                    <div class="profile-edit"><a href="/editname">Edit</a></div>
                 </div>
                 <hr>
                 <div class="profile-info">
                     <div class="profile-title">Password: </div>
                     <div class="profile-element">****</div>
-                    <div class="profile-edit"><a href="">Edit</a></div>
+                    <div class="profile-edit"><a href="/editpas">Edit</a></div>
                 </div>
                 <hr>
                 `

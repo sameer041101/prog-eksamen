@@ -198,7 +198,8 @@ app.get('/signup', (req, res) => {
     
     }
     else{
-      res.send(`Password ikke ens`)
+      alert("password ikke ens")
+      res.redirect("/signup")
     }
   });
 
@@ -220,6 +221,219 @@ app.get('/user', (req, res) => {
     res.setHeader('Content-Type', 'text/html');
     res.setHeader('Set-Cookie', ['user='+req.session.user]);
     res.sendFile(__dirname+'/home/user.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+// Route edit user pages
+app.get('/userup', (req, res) => {
+  if(req.session.loggedin){
+    res.sendFile(__dirname+'/home/userup.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.get('/editemail', (req, res) => {
+  if(req.session.loggedin){
+    res.sendFile(__dirname+'/home/editemail.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.post('/editemail', async (req, res) => {
+  if(req.session.loggedin){
+    let userEmail = req.body.email;
+    const path = './user.json';
+    
+   
+
+    async function readJsonFile (f, userEmail) {
+      const obj = await fs.readJSON(f, { throws: false })
+      console.log(obj) // => null
+      // create array for users
+      var users = []
+
+      // Check if file is empty and if not empty check if email is taken
+      if(obj != null){ // If file not empty 
+        // read in all usres to users
+        for (var key in obj){
+
+          if(obj[key]["user"]["email"] == userEmail){
+            return "EIU"
+          }else{
+            for (var key in obj){
+
+              if(obj[key]["user"]["email"] == req.session.user){
+                // push the updated user to users
+                var user = {};
+                
+                user["user"] = {"email": userEmail,"name": obj[key]["user"]["name"],"password":obj[key]["user"]["password"]};
+
+                users.push(user)
+
+              }else{
+
+                
+                var user = {};
+                user["user"] = obj[key]["user"];
+
+                users.push(user)
+              }
+            }
+          }
+        }
+        
+        // write usres to users.json
+        writeJsonFile(path, users)
+        return JSON.stringify(users)
+    
+      }
+    }
+    var file = await readJsonFile(path, userEmail)
+    if (file == "EIU"){
+      alert("Email is used")
+      res.redirect("/user")
+    }else{
+      req.session.user= userEmail;
+      res.setHeader('Content-Type', 'text/html');
+      res.setHeader('Set-Cookie', ['user='+req.session.user]);
+      res.redirect('/userup');
+    }
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.get('/editname', (req, res) => {
+  if(req.session.loggedin){
+    res.sendFile(__dirname+'/home/editname.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.post('/editname', async (req, res) => {
+  if(req.session.loggedin){
+    let userName = req.body.name;
+    const path = './user.json';
+    
+   
+
+    async function readJsonFile (f, userName) {
+      const obj = await fs.readJSON(f, { throws: false })
+      console.log(obj) // => null
+      // create array for users
+      var users = []
+
+      // Check if file is empty and if not empty check if email is taken
+      if(obj != null){ // If file not empty 
+        // read in all usres to users
+        for (var key in obj){
+
+          if(obj[key]["user"]["email"] == req.session.user){
+            // push the updated user to users
+            var user = {};
+            
+            user["user"] = {"email": obj[key]["user"]["email"],"name": userName,"password":obj[key]["user"]["password"]};
+
+            users.push(user)
+
+          }else{
+
+          
+          var user = {};
+          user["user"] = obj[key]["user"];
+
+          users.push(user)
+            }
+          }
+        }
+        
+        // write usres to users.json
+        writeJsonFile(path, users)
+        return JSON.stringify(users)
+      
+      
+    }
+    var file = await readJsonFile(path, userName)
+    if(file){
+      res.redirect('/userup');
+    }else{
+      res.send("Something went wrong")
+    }
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.get('/editpas', (req, res) => {
+  if(req.session.loggedin){
+    res.sendFile(__dirname+'/home/editpas.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.post('/editpas', async (req, res) => {
+  if(req.session.loggedin){
+    let userPassword = req.body.psw;
+    let pswRepeat = req.body.pswRepeat;
+    const path = './user.json';
+    
+   
+
+    async function readJsonFile (f, userPassword) {
+      const obj = await fs.readJSON(f, { throws: false })
+      console.log(obj) // => null
+      // create array for users
+      var users = []
+
+      // Check if file is empty and if not empty check if email is taken
+      if(obj != null){ // If file not empty 
+        // read in all usres to users
+        for (var key in obj){
+
+          if(obj[key]["user"]["email"] == req.session.user){
+            // push the updated user to users
+            var user = {};
+            
+            user["user"] = {"email": obj[key]["user"]["email"],"name": obj[key]["user"]["name"],"password":userPassword};
+
+            users.push(user)
+
+          }else{
+
+          
+          var user = {};
+          user["user"] = obj[key]["user"];
+
+          users.push(user)
+            }
+          }
+        }
+        
+        // write usres to users.json
+        writeJsonFile(path, users)
+        return JSON.stringify(users)
+      
+      
+    }
+
+    if(userPassword == pswRepeat){
+      var file = await readJsonFile(path, userPassword)
+    
+      if(file){
+        res.redirect('/userup');
+      }else{
+        res.send("Something went wrong")
+      }
+    }else{
+      alert("password ikke ens")
+      res.redirect("/editpas")
+    }
   }else{
     res.redirect("/")
   }
