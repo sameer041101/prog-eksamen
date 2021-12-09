@@ -20,7 +20,7 @@ user = () => {
             if(data[key]["user"]["email"] == check_cookie_name("user")){
                 html = `
                 <div class="profile-header">
-                    User information
+                    User information - <a href="/deleteuser">Slet bruger</a>
                 </div>
                 <hr>
                 <div class="profile-info">

@@ -439,6 +439,62 @@ app.post('/editpas', async (req, res) => {
   }
 });
 
+app.get('/deleteuser', (req, res) => {
+  if(req.session.loggedin){
+    res.sendFile(__dirname+'/home/deleteuser.html');
+  }else{
+    res.redirect("/")
+  }
+});
+
+app.post('/deleteuser', async (req, res) => {
+  if(req.session.loggedin){
+    const path = './user.json';
+    
+   
+
+    async function readJsonFile (f) {
+      const obj = await fs.readJSON(f, { throws: false })
+      console.log(obj) // => null
+      // create array for users
+      var users = []
+
+      // Check if file is empty and if not empty check if email is taken
+      if(obj != null){ // If file not empty 
+        // read in all usres to users
+        for (var key in obj){
+
+          if(obj[key]["user"]["email"] != req.session.user){
+          
+          var user = {};
+          user["user"] = obj[key]["user"];
+
+          users.push(user)
+            }
+          }
+        }
+        
+        // write usres to users.json
+        writeJsonFile(path, users)
+        return JSON.stringify(users)
+      
+      
+    }
+
+
+      var file = await readJsonFile(path)
+    
+      if(file){
+        res.redirect('/');
+      }else{
+        res.send("Something went wrong")
+      }
+
+  }else{
+    res.redirect("/")
+  }
+});
+
 // Route my items page
 app.get('/myitems', (req, res) => {
   if(req.session.loggedin){
