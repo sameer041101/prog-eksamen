@@ -55,7 +55,9 @@ app.get('/eksamencss', (req, res) => {
 app.get('/homecss', (req, res) => {
   res.sendFile(__dirname + '/home/home.css');
 });
-
+app.get('/image', (req, res) => {
+  res.sendFile(__dirname + '/hus.jpeg');
+});
 // Route to Homepage
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/eksamen.html');
