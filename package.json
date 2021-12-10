@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "./node_modules/nodemon/bin/nodemon.js"
   },
-  "author": "Seb",
+  "author": "Sameer",
   "license": "ISC",
   "dependencies": {
     "alert": "^5.0.10",
