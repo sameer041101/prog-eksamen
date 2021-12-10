@@ -58,9 +58,10 @@ app.get('/homecss', (req, res) => {
 app.get('/image', (req, res) => {
   res.sendFile(__dirname + '/hus.jpeg');
 });
-app.get('/image1', (req, res) => {
+app.get('/image2', (req, res) => {
   res.sendFile(__dirname + '/tøj.jpeg');
 });
+
 // Route to Homepage
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/eksamen.html');
