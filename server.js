@@ -537,7 +537,7 @@ app.post('/add', async (req, res) => {
   async function readJsonFile (f, katagori, pris, img) {
     const obj = await fs.readJSON(f, { throws: false })
     console.log(obj) // => null
-    // create array for varere
+    // create array for varer
     var varers = []
 
     if(obj != null){ // If file not empty 
@@ -558,7 +558,7 @@ app.post('/add', async (req, res) => {
 
       varers.push(varer)
 
-      // write usres to users.json
+      // write varer to varer.json
       writeJsonFile(path, varers)
       return JSON.stringify(varers)
     
